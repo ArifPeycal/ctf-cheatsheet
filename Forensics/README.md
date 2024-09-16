@@ -128,21 +128,21 @@ There will be certain cases where tools can't recover the image file, then we ne
 
    - **JPG File Header**:
 
-```
-typedef struct _JFIFHeader
-{
-  BYTE SOI[2];          /* 00h  Start of Image Marker     FFh D8h*/
-  BYTE APP0[2];         /* 02h  Application Use Marker    FFh E0h*/
-  BYTE Length[2];       /* 04h  Length of APP0 Field      */
-  BYTE Identifier[5];   /* 06h  "JFIF" (zero terminated) Id String 4Ah 46h 49h 46h 00h */
-  BYTE Version[2];      /* 07h  JFIF Format Revision      01h 02h/ 01h 00h */
-  BYTE Units;           /* 09h  Units used for Resolution */
-  BYTE Xdensity[2];     /* 0Ah  Horizontal Resolution     */
-  BYTE Ydensity[2];     /* 0Ch  Vertical Resolution       */
-  BYTE XThumbnail;      /* 0Eh  Horizontal Pixel Count    */
-  BYTE YThumbnail;      /* 0Fh  Vertical Pixel Count      */
-} JFIFHEAD;
-```
+
+| Offset (Hex) | Field        | Description                                                    | Example Values (Hex)  |
+|--------------|--------------|----------------------------------------------------------------|-----------------------|
+| 00h          | SOI          | Start of Image Marker                                          | FF D8                 |
+| 02h          | APP0         | Application Use Marker                                         | FF E0                 |
+| 04h          | Length       | Length of APP0 Field                                           | (varies)              |
+| 06h          | Identifier   | "JFIF" (null-terminated string identifying JFIF format)        | 4A 46 49 46 00        |
+| 07h          | Version      | JFIF Format Revision                                           | 01 02 / 01 00         |
+| 09h          | Units        | Units used for resolution                                      | (varies)              |
+| 0Ah          | Xdensity     | Horizontal resolution                                          | (varies)              |
+| 0Ch          | Ydensity     | Vertical resolution                                            | (varies)              |
+| 0Eh          | XThumbnail   | Horizontal pixel count for thumbnail                           | (varies)              |
+| 0Fh          | YThumbnail   | Vertical pixel count for thumbnail                             | (varies)              |
+
+
 
 
    - **JPEG Header Patching**:
