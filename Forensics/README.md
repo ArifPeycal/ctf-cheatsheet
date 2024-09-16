@@ -3,7 +3,7 @@
 
 ### 1. **Basic File Identification**
 **`file`**:
-   - Identifies file type based on magic numbers.
+   - Identifies file type based on magic numbers. If you were given a binary file or file without extension, check using `file` first.
      
      ```bash
      file <filename>
