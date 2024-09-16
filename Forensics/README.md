@@ -80,25 +80,7 @@
      pngcheck -v <filename.png>
      ```
 
-
-### 6. **PE (Portable Executable) Files**
-**`pefile`**:
-   - Python module for parsing and analyzing PE files.
-     
-     ```python
-     import pefile
-     pe = pefile.PE('malware.exe')
-     ```
-
-**`exiftool`**:
-   - Can also extract metadata from executable files.
-     
-     ```bash
-     exiftool <filename.exe>
-     ```
-
-
-### 7. **ELF (Executable and Linkable Format) Files**
+### 6. **ELF (Executable and Linkable Format) Files**
    - **`readelf`**: Displays information about ELF files.
      ```bash
      readelf -a <filename>
