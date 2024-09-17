@@ -117,7 +117,7 @@ Due to CTF time constraints, it is recommended that players use tools to automat
      
      ![image](https://github.com/user-attachments/assets/07150792-eb4d-47f4-9d0c-6a0f4d2d29b6)
 
-### 2. **Manually Patching Corrupted Headers**
+### 2. **Manually Patching JPEG Corrupted Headers**
 There will be certain cases where tools can't recover the image file, then we need to manually fix the image file. An easy image recovery challenge only requires the CTF players to modify the magic bytes of an image file.  
 
    - **Magic Bytes**: Also can refer [here](https://en.wikipedia.org/wiki/List_of_file_signatures).
@@ -143,10 +143,8 @@ There will be certain cases where tools can't recover the image file, then we ne
 | 0Fh          | YThumbnail   | Vertical pixel count for thumbnail                             | (varies)              |
 
 
-
-
    - **JPEG Header Patching**:
-Modify the magic bytes and compare them with any normal JPEG file.  
+Open hexeditor to change the magic bytes, compare the bytes with any normal JPEG sample.
 
 Corrupted file:
 
@@ -157,30 +155,92 @@ Repaired file:
 ![image](https://github.com/user-attachments/assets/25fb4338-5607-458f-b428-d8c306b3949a)
 
 
-   - **PNG Header Patching**:
-     1. Use `pngcheck` to verify file information.
-     2. Ensure the `IHDR` chunk follows immediately after the PNG signature in the hex dump.
-        
-     
-
-   - **Repair with a hex editor**: If only the header is corrupted, you can replace the corrupted header with a correct one from a similar working JPEG image. Use **`xxd`** to copy the first few lines (header) from a working JPEG and patch it into the corrupted file.
+### 3. **Manually Patching PNG Corrupted Headers**
 
 
+To manually patch the header, you need to have some basic understanding of PNG file format. The structure of a PNG file consists of a signature followed by a series of chunks. Each chunk holds specific data related to the image. 
 
+1. **PNG Signature (8 bytes)**
+   
+The first part of the PNG file is a signature that helps identify the file as a PNG image. It consists of the following bytes:
 
-#### 8. **Check for Data Hiding (Steganography)**
-   - **`steghide`**: Check if steganographic data was used, especially if the image appears corrupted but still has valid portions.
-     ```bash
-     steghide extract -sf <corrupted_image>
-     ```
+| Values (Hex)    | Description                                                |
+|-----------------|------------------------------------------------------------|
+| 89              | High bit set to detect non-8-bit systems and prevent misinterpretation. |
+| 50 4E 47        | "PNG" in ASCII for easy identification.                    |
+| 0D 0A           | DOS-style line ending (CRLF) for DOS-Unix conversion.      |
+| 1A              | End-of-file marker for DOS.                                |
+| 0A              | Unix-style line ending (LF) for Unix-DOS conversion.       |
 
-   - **`zsteg`**: Analyze PNG files for LSB steganography or other common hiding techniques.
-     ```bash
-     zsteg <corrupted_image>
-     ```
+![image](https://github.com/user-attachments/assets/98ea06f0-e7e8-4c31-8e23-1d6ce3dccc9a)
 
+2. **PNG Chunks**
+   
+The main content of a PNG file is stored in chunks. Each chunk has a specific purpose, and the PNG specification allows for both standard and custom chunks. Each chunk consists of four parts:
 
-#### 10. **Repair Online Tools**
-   - **[JPEG-Repair Online Tool](https://www.impulseadventure.com/photo/fix-corrupt-jpeg.html)**: Offers a web-based interface to repair corrupted JPEG files.
-   - **[Online PNG Tools](https://onlinepngtools.com/)**: A suite of tools to analyze and repair PNG files online.
+| Field         | Length      | Description                                                                         |
+|---------------|-------------|-------------------------------------------------------------------------------------|
+| Length        | 4 bytes     | The length of the chunk data in bytes.                                               |
+| Chunk Type    | 4 bytes     | A 4-character ASCII code identifying the chunk type.                                 |
+| Chunk Data    | Variable    | The data associated with the chunk (its length is specified in the Length field).    |
+| CRC           | 4 bytes     | A 4-byte CRC (Cyclic Redundancy Check) to verify the integrity of the chunk.         |
+
+#### **Critical Chunks (Required in every PNG file):**
+
+1. `IHDR`(Image Header)
+
+Hex Values: `49 48 44 52`
+
+Purpose: Defines the image’s width, height, bit depth, color type, compression method, filter method, and interlace method.
+
+| Field          | Length   | Description                                              |
+|----------------|----------|----------------------------------------------------------|
+| Width          | 4 bytes  | Image width in pixels.                                   |
+| Height         | 4 bytes  | Image height in pixels.                                  |
+| Bit Depth      | 1 byte   | Number of bits per channel (e.g., 8, 16).                |
+| Color Type     | 1 byte   | Defines color scheme (e.g., grayscale, RGB).             |
+| Compression    | 1 byte   | Compression method used (always 0 for PNG).              |
+| Filter Method  | 1 byte   | Filter method used (always 0 for PNG).                   |
+| Interlace      | 1 byte   | Interlace method (0 = no interlace, 1 = Adam7).          |
+
+![image](https://github.com/user-attachments/assets/041fc901-9361-4430-893f-2d68da9f2dc5)
+
+You can change the width and height by converting decimals into hexadecimals. https://www.rapidtables.com/convert/number/hex-to-decimal.html?
+
+2. `PLTE` (Palette Table)
+
+Purpose: Contains the color palette used in indexed-color images. It contains from 1 to 256 palette entries, each a three-byte series of the form. 
+
+- Red 🔴: 1 byte (0 = black, 255 = red) - Green 🟢: 1 byte (0 = black, 255 = green) - Blue 🔵: 1 byte (0 = black, 255 = blue)
+
+3. `IDAT` (Image Data)
+   
+Hex Values: `49 44 41 54`
+
+Purpose: Contains the actual image data, which is compressed using the DEFLATE algorithm. Multiple IDAT chunks can be present and are concatenated to form the complete image data.
+
+![image](https://github.com/user-attachments/assets/e2ff52dd-6419-4188-b55a-13a9ae62f8f8)
+
+4. `IEND` (Image End)
+
+Purpose: Marks the end of the PNG file. It contains no data but is necessary to signify the file’s end.
+
+| Value (Hex)     | Description                                      |
+|-----------------|--------------------------------------------------|
+| 00 00 00 00     | The length of the IEND chunk is always 0 bytes.  |
+| 49 45 4E 44     | The chunk type, "IEND", marks the end of the PNG file. |
+| AE 42 60 82     | A fixed 4-byte CRC value for the IEND chunk.     |
+
+![image](https://github.com/user-attachments/assets/d06c4adf-ba66-4105-ac9a-4fb5b53e109e)
+
+#### Ancillary Chunks (Optional):
+
+- tEXt / zTXt / iTXt (Textual Data): Store textual metadata. tEXt stores uncompressed text, zTXt stores compressed text, and iTXt stores international text.
+- gAMA (Gamma Correction): Specifies the gamma correction to be applied to the image.
+- cHRM (Chromaticity): Defines the chromaticity coordinates for the image’s primary colors.
+- tIME (Modification Time): Stores the last modification time of the image.
+- bKGD (Background Color): Suggests a background color for images without alpha transparency.
+- pHYs (Physical Pixel Dimensions): Specifies the intended pixel size or aspect ratio.        
+   
+
 
