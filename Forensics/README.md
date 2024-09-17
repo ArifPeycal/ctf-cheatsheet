@@ -280,7 +280,7 @@ Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images,
 
 ### 1. 🖼️ **Image Steganography**
 
-#### **Tools**:
+**Tools**:
 
 - **`steghide`**: Hides/Extracts data in images and audio.
   - *Extract data*:
@@ -320,7 +320,7 @@ Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images,
 
 ### 2. 🎵 **Audio Steganography**
 
-####  **Tools**:
+**Tools**:
 
 - **`DeepSound`**: Popular stegnography tool used to hide data inside audio tracks as well as decode it. Download [here](https://github.com/Jpinsoft/DeepSound).
     - If the challenge descriptions/hints stated "Deep", most probably need to use DeepSound. 
@@ -343,7 +343,7 @@ Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images,
 
 ### 3. 📄 **Text Steganography**
 
-####  **Tools**:
+**Tools**:
 
 - **`stegsnow`**: Hides messages in whitespace at the end of lines in text files.
   
