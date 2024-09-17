@@ -232,7 +232,7 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
 - bKGD (Background Color): Suggests a background color for images without alpha transparency.
 - pHYs (Physical Pixel Dimensions): Specifies the intended pixel size or aspect ratio.        
    
-#### CTF Questions
+### 4. CTF Questions
 1. **Incorrect PNG signature** -> `89 50 4E 47`
 2. **Incorrect `IHDR`,`IDAT`, and `IEND` chunk** -> Change to correct hex values
 3. **Incorrect data length** -> Calculate the number of bytes starting immediately after the chunk type and ending just before the current chunk's CRC. Use this [link](https://www.rapidtables.com/convert/number/hex-to-decimal.html) to convert from decimal to hexadecimals.
