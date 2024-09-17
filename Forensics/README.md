@@ -276,7 +276,6 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
    </details>
 
 ## 🕵️ Steganography
-Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images, audio, and text. It includes common tools, techniques, and file types used in steganography challenges.
 
 ### 1. 🖼️ **Image Steganography**
 
@@ -307,8 +306,6 @@ Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images,
     ```bash
     zsteg -a image.png
     ```
-
-
     
 - **`stegsolve`**: GUI tool for analyzing image layers and color channels.
   - Use it to check image layers, LSB (Least Significant Bit), and filters for hidden data.
@@ -338,9 +335,6 @@ Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images,
     stegolsb wavsteg -r -i audio.wav -o output.txt -b 1
     ```
     
-
-
-
 ### 3. 📄 **Text Steganography**
 
 **Tools**:
