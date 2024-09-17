@@ -1,5 +1,5 @@
 # 🔎 Forensics CTF Cheatsheet
-## File Format Analysis
+## 📁File Format Analysis
 
 ### 1. **Basic File Identification**
 **`file`**:
@@ -32,14 +32,6 @@
      
      ```bash
      exiftool <filename>
-     ```
-
-**`binwalk`**:
-
-   - Scans files for embedded data and file systems, can extract files.
-     
-     ```bash
-     binwalk -e <filename>
      ```
 
 ### 3. **Compression and Archives**
@@ -84,7 +76,7 @@
      objdump -d <filename>
      ```
 
-## Corrupted Image Recovery
+## 🖼️ Corrupted Image Recovery
 
 ### 1. **Automated Tools**
 Due to CTF time constraints, it is recommended that players use tools to automate the process. 
@@ -205,8 +197,6 @@ Purpose: Defines the image’s width, height, bit depth, color type, compression
 
 ![image](https://github.com/user-attachments/assets/041fc901-9361-4430-893f-2d68da9f2dc5)
 
-You can change the width and height by converting decimals into hexadecimals. https://www.rapidtables.com/convert/number/hex-to-decimal.html?
-
 2. `PLTE` (Palette Table)
 
 Purpose: Contains the color palette used in indexed-color images. It contains from 1 to 256 palette entries, each a three-byte series of the form. 
@@ -242,5 +232,45 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
 - bKGD (Background Color): Suggests a background color for images without alpha transparency.
 - pHYs (Physical Pixel Dimensions): Specifies the intended pixel size or aspect ratio.        
    
+#### CTF Questions
+1. **Incorrect PNG signature** -> `89 50 4E 47`
+2. **Incorrect `IHDR`,`IDAT`, and `IEND` chunk** -> Change to correct hex values
+3. **Incorrect data length** -> Calculate the number of bytes starting immediately after the chunk type and ending just before the current chunk's CRC. Use this [link](https://www.rapidtables.com/convert/number/hex-to-decimal.html) to convert from decimal to hexadecimals.
+4. **Incorrect CRC** -> Use `pngcheck`
+5. **Unknown width and length but known CRC** -> Bruteforce using Pyton script
+   <details>
+      
+      <summary>Bruteforce solution</summary>
+      
+      ```py
+      import struct
+      import zlib
 
+      known_crc = 0x932f8a6b
+      
+      # Fixed part of IHDR (bit depth, color type, etc.) after width and height
+      fixed_data = b'\x08\x06\x00\x00\x00'      # Change according to PNG file
 
+      chunk_type = b'IHDR'
+      
+      def brute_force_width_height():
+          for width in range(1, 10000):  
+              for height in range(1, 10000): 
+                  ihdr_data = struct.pack(">II", width, height) + fixed_data
+
+            calculated_crc = zlib.crc32(chunk_type + ihdr_data) & 0xffffffff
+
+            if calculated_crc == known_crc:
+                width_hex = f"{width:08X}"
+                height_hex = f"{height:08X}"
+                print(f"Found match! Width: {width} (0x{width_hex}), Height: {height} (0x{height_hex})")
+                return width, height, width_hex, height_hex
+
+    print("No match found.")
+    return None
+
+   brute_force_width_height()
+
+   ```
+      
+   </details>
