@@ -274,3 +274,87 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
    ```
       
    </details>
+
+## 🕵️ Steganography
+Here's a concise CTF (Capture The Flag) cheat sheet for steganography in images, audio, and text. It includes common tools, techniques, and file types used in steganography challenges.
+
+### 1. 🖼️ **Image Steganography**
+
+#### **Tools**:
+
+- **`steghide`**: Hides/Extracts data in images and audio.
+  - *Extract data*:
+    ```bash
+    steghide extract -sf image.jpg
+    ```
+  - If there's a password:
+    ```bash
+    steghide extract -sf image.jpg -p "password"
+    ```
+- **`stegseek`**: Extract hidden files from password protected image using wordlist
+  - Upgraded version of `steghide`, can use `steghide` command.
+    ```bash
+    stegseek [stegofile.jpg] [wordlist.txt]
+    ```
+- **`binwalk`**: Extracts hidden files or embedded data.
+  - *Basic extraction*:
+    ```bash
+    binwalk -e image.png
+    ```
+
+- **`zsteg`**: Detects hidden data in PNG/BMP files.
+  - *Scan for hidden data*:
+    ```bash
+    zsteg -a image.png
+    ```
+
+
+    
+- **`stegsolve`**: GUI tool for analyzing image layers and color channels.
+  - Use it to check image layers, LSB (Least Significant Bit), and filters for hidden data.
+    ```bash
+    java -jar stegsolve.jar
+    ```
+   ![image](https://github.com/user-attachments/assets/a57a2b1c-5cf5-4c16-8067-9d0104851ca7)
+
+
+### 2. 🎵 **Audio Steganography**
+
+####  **Tools**:
+
+- **`DeepSound`**: Popular stegnography tool used to hide data inside audio tracks as well as decode it. Download [here](https://github.com/Jpinsoft/DeepSound).
+    - If the challenge descriptions/hints stated "Deep", most probably need to use DeepSound. 
+
+     ![image](https://github.com/user-attachments/assets/a74a6fb3-548a-4879-9d42-5b7138eadc00)
+
+- **`Audacity / Sonic Visualiser `**: Audio editing tool for inspecting waveforms and spectrograms.
+  - Use *spectrogram view* in Audacity to look for visual patterns.
+    
+   ![image](https://github.com/user-attachments/assets/0e63ea2e-0189-4ebb-a6b7-5e09e5e6d4a0)
+
+- **`stegolsb`**: Extract hidden data in LSB of audio files.
+  - *Extract from audio*:
+    ```bash
+    stegolsb wavsteg -r -i audio.wav -o output.txt -b 1
+    ```
+    
+
+
+
+### 3. 📄 **Text Steganography**
+
+####  **Tools**:
+
+- **`stegsnow`**: Hides messages in whitespace at the end of lines in text files.
+  
+   ![image](https://github.com/user-attachments/assets/b855b02d-10b8-4743-a7d7-c3d873c60e44)
+
+  - *Extract message*:
+    ```bash
+    stegsnow -C -p "password" textfile.txt
+    ```
+- **`Unicode Steganography with Zero-Width Characters`**: Zero-width characters is inserted within the words.
+  - *https://330k.github.io/misc_tools/unicode_steganography.html*
+
+   ![image](https://github.com/user-attachments/assets/cefd3d6d-397e-439b-90e7-d0629abbb056)
+
