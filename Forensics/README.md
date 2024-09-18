@@ -368,6 +368,8 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
       1. SVG/XML: `<?xml version="1.0"?>`
       2. `networks` file in C:\Windows\System32\drivers\etc: `# Copyright (c) 1993-1999 Microsoft Corp`
 3. **Run `bkcrack`**:
+   
+   - Install bkcrack from this [Github repo](https://github.com/kimci86/bkcrack).
    - Command:
      ```bash
      bkcrack -C encrypted.zip -c encrypted_file_in_zip -P known_plaintext_file -p known_plaintext
