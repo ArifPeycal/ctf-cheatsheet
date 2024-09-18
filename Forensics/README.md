@@ -352,3 +352,108 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
 
    ![image](https://github.com/user-attachments/assets/cefd3d6d-397e-439b-90e7-d0629abbb056)
 
+
+## 🗂️ Archives Cracking 
+
+### 1. **Zip Known-Plaintext Attack (ZipCrypto Store)**
+
+1. **Identify ZIP Encryption Type**:
+   - Use tools like `zipinfo` or `file`. If the compression method is `store`, then, it is like to be vulnerable to `ZipCryto Known-Plaintext Attack`.
+     
+      ![image](https://github.com/user-attachments/assets/bfdb0671-9873-44af-a874-5134fe89f387)
+
+2. **Find a Known Plaintext**:
+   - You need to know at least `12 bytes` from a file from inside the ZIP archive.
+   - Candidate files:
+      1. SVG/XML: `<?xml version="1.0"?>`
+      2. `networks` file in C:\Windows\System32\drivers\etc: `# Copyright (c) 1993-1999 Microsoft Corp`
+3. **Run `bkcrack`**:
+   - Command:
+     ```bash
+     bkcrack -C encrypted.zip -c encrypted_file_in_zip -P known_plaintext_file -p known_plaintext
+     ```
+   - **Output**: `bkcrack` will generate the keys to decrypt the archive.
+   
+      ![image](https://github.com/user-attachments/assets/8e979b74-cc8a-44d2-bb8c-ace8ce4204f4)
+
+4. **Decrypt the ZIP**:
+   - Use the keys found in the previous step to decrypt the ZIP file:
+     ```bash
+     bkcrack -C secret.zip -k <key0> <key1> <key2> -U
+     ```
+      ![image](https://github.com/user-attachments/assets/d6b5e776-ac92-4ae8-9e6e-60f71208f35f)
+
+### 2. **Cracking Archive Passwords with `John the Ripper`**
+
+1. **Extract ZIP or RAR Hash**:
+   - **For ZIP**:
+     ```bash
+     zip2john archive.zip > zip.hash
+     ```
+   - **For RAR**:
+     ```bash
+     rar2john archive.rar > rar.hash
+     ```
+
+2. **Crack the Password**:
+   - Use John to crack the password using the hash:
+     ```bash
+     john --wordlist=/path/to/wordlist.txt zip.hash
+     ```
+
+3. **View Cracked Password**:
+   - Once cracked, view the password with:
+     ```bash
+     john --show zip.hash
+     ```
+
+### 3. **Cracking ZIP and RAR Passwords with `Hashcat`**
+
+#### 🖥️ **Hashcat Modes**:
+- **ZIP mode**: `13600`
+- **RAR3 mode**: `13000`
+- **RAR5 mode**: `23700`
+
+
+2. **Extract Hash**:
+   - **For ZIP**:
+     ```bash
+     zip2john archive.zip > zip.hash
+     ```
+   - **For RAR**:
+     ```bash
+     rar2john archive.rar > rar.hash
+     ```
+
+3. **Run Hashcat**:
+   - **ZIP** cracking example:
+     ```bash
+     hashcat -m 13600 zip.hash /path/to/wordlist.txt
+     ```
+   - **RAR3** cracking example:
+     ```bash
+     hashcat -m 13000 rar.hash /path/to/wordlist.txt
+     ```
+
+4. **Check Cracked Password**:
+   - View the cracked password using:
+     ```bash
+     hashcat -m <mode> --show hashfile
+     ```
+
+## 4. **Analyzing and Cracking 7z Files**
+
+1. **Convert 7z File to Hash Format**:
+   ```bash
+   7z2hashcat file.7z > 7z.hash
+   ```
+
+2. **Crack 7z Password with Hashcat**:
+   ```bash
+   hashcat -m 11600 7z.hash /path/to/wordlist.txt
+   ```
+
+3. **Check Cracked Password**:
+   ```bash
+   hashcat --show 7z.hash
+   ```
