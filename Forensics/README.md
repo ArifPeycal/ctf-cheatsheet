@@ -109,6 +109,8 @@ Due to CTF time constraints, it is recommended that players use tools to automat
      
      ![image](https://github.com/user-attachments/assets/07150792-eb4d-47f4-9d0c-6a0f4d2d29b6)
 
+---
+
 ### 2. **Manually Patching JPEG Corrupted Headers**
 There will be certain cases where tools can't recover the image file, then we need to manually fix the image file. An easy image recovery challenge only requires the CTF players to modify the magic bytes of an image file.  
 
@@ -146,6 +148,7 @@ Repaired file:
 
 ![image](https://github.com/user-attachments/assets/25fb4338-5607-458f-b428-d8c306b3949a)
 
+---
 
 ### 3. **Manually Patching PNG Corrupted Headers**
 
@@ -231,7 +234,9 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
 - tIME (Modification Time): Stores the last modification time of the image.
 - bKGD (Background Color): Suggests a background color for images without alpha transparency.
 - pHYs (Physical Pixel Dimensions): Specifies the intended pixel size or aspect ratio.        
-   
+
+---
+
 ### 4. CTF Questions
 1. **Incorrect PNG signature** -> `89 50 4E 47`
 2. **Incorrect `IHDR`,`IDAT`, and `IEND` chunk** -> Change to correct hex values
@@ -314,6 +319,7 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
     ```
    ![image](https://github.com/user-attachments/assets/a57a2b1c-5cf5-4c16-8067-9d0104851ca7)
 
+---
 
 ### 2. 🎵 **Audio Steganography**
 
@@ -334,7 +340,8 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
     ```bash
     stegolsb wavsteg -r -i audio.wav -o output.txt -b 1
     ```
-    
+---
+
 ### 3. 📄 **Text Steganography**
 
 **Tools**:
@@ -385,6 +392,8 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
      ```
       ![image](https://github.com/user-attachments/assets/d6b5e776-ac92-4ae8-9e6e-60f71208f35f)
 
+---
+
 ### 2. **Cracking Archive Passwords with `John the Ripper`**
 
 1. **Extract ZIP or RAR Hash**:
@@ -408,6 +417,7 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
      ```bash
      john --show zip.hash
      ```
+---
 
 ### 3. **Cracking ZIP and RAR Passwords with `Hashcat`**
 
@@ -459,3 +469,133 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
    ```bash
    hashcat --show 7z.hash
    ```
+
+
+## 🧠 Volatility 2.6 & 3
+
+### 🔧 **Basic Workflow**:
+
+1. **Identify the Memory Image Profile** (Volatility 2.6):
+   ```bash
+   volatility -f memory.raw imageinfo
+   ```
+   - This helps identify the operating system profile of the memory dump, which you will need to run further commands.
+
+2. **Profile Setting** (Volatility 2.6):
+   - Once you have the profile, set it in all future commands using:
+     
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 <command>
+   ```
+
+3. **For Volatility 3**:
+   - Volatility 3 does not use profiles; it auto-detects the necessary information from the memory image. Commands are executed like this:
+   
+   ```bash
+   vol3 -f memory.raw <command>
+   ```
+---
+
+
+### 🔍 **Process Information**:
+
+1. **pslist**: Lists active processes.
+   ```bash
+   volatility -f <file> --profile=<profile> pslist
+   python3 vol.py -f <file> windows.pslist
+   ```
+
+2. **pstree**: Displays process tree.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 pstree
+   vol3 -f memory.raw windows.pstree
+   ```
+
+3. **psscan**: Finds hidden or terminated processes.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 psscan
+   vol3 -f memory.raw windows.malfind
+   ```
+
+4. **malfind**: Detect suspicious code injections.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 malfind
+   ```
+
+5. **dlllist**: Lists loaded DLLs for a process.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 dlllist -p <pid>
+   vol3 -f memory.raw windows.dlllist --pid <pid>
+   ```
+---
+
+### 🌐 **Network Activity**:
+
+1. **netscan**: Shows open network connections and listening ports.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 netscan
+   vol3 -f memory.raw windows.netscan
+   ```
+   
+2. **windows.netstat**: Displays network statistics.
+   ```bash
+   vol3 -f memory.raw windows.netstat
+   ```
+   
+3. **connscan**: Scans for TCP connection structures in memory.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 connscan
+   ```
+
+4. **sockets**: Lists open sockets.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 sockscan
+   ```
+
+---
+
+### 🗃️ **Files and Registry**:
+
+1. **filescan**: Scans for open files in memory.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 filescan
+   vol3 -f memory.raw windows.filescan
+   ```
+
+2. **dumpfiles**: Dumps open files.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 dumpfiles -Q <file_offset> --dump-dir /path/to/output
+   vol3 -f memory.raw windows.dumpfiles --dump
+   ```
+
+3. **hivelist**: Lists registry hives.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 hivelist
+   vol3 -f memory.raw windows.registry.hivelist
+   ```
+
+4. **printkey**: Displays the contents of a registry key.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 printkey -K <key_path>
+   vol3 -f memory.raw windows.registry.printkey -K <key_path>
+   ```
+
+---
+
+### 💻 Command Line History:
+
+1. **cmdscan**: Finds command-line history from memory.
+
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 cmdscan
+   ```
+2. **consoles**: Displays the contents of command prompt history for each console session.
+
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 consoles
+   ```
+3. **windows.cmdline**: Shows command line arguments for processes.
+   ```bash
+   vol3 -f memory.raw windows.cmdline
+   ```
+---
