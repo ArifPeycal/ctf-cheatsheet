@@ -567,14 +567,21 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
    volatility -f memory.raw --profile=Win7SP1x64 dumpfiles -Q <file_offset> --dump-dir /path/to/output
    vol3 -f memory.raw windows.dumpfiles --dump
    ```
+3. **mftparser**: Parses and lists the NTFS Master File Table (MFT).
+   -  Use this to search for files, deleted or hidden entries, or timestamps related to file operations.
 
-3. **hivelist**: Lists registry hives.
+   ```bash
+   volatility -f memory.raw --profile=Win7SP1x64 mftparser
+   ```
+
+
+4. **hivelist**: Lists registry hives.
    ```bash
    volatility -f memory.raw --profile=Win7SP1x64 hivelist
    vol3 -f memory.raw windows.registry.hivelist
    ```
 
-4. **printkey**: Displays the contents of a registry key.
+. **printkey**: Displays the contents of a registry key.
    ```bash
    volatility -f memory.raw --profile=Win7SP1x64 printkey -K <key_path>
    vol3 -f memory.raw windows.registry.printkey -K <key_path>
@@ -599,3 +606,13 @@ Purpose: Marks the end of the PNG file. It contains no data but is necessary to 
    vol3 -f memory.raw windows.cmdline
    ```
 ---
+
+### 🔑 Password Dump:
+
+1. **lsadump**: Extracts LSA (Local Security Authority) secrets from memory, which can include passwords and sensitive security information.
+   - Use this to retrieve information like service passwords or cached domain credentials.
+
+   ``bash
+   volatility -f memory.raw --profile=Win7SP1x64 lsadump
+   ```
+
